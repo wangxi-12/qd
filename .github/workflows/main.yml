@@ -1,0 +1,51 @@
+name: Nightly CTF Sign-in
+
+# 1) 每晚北京时间 20:00（UTC 12:00）定时触发
+# 2) 支持手动触发
+on:
+  schedule:
+    - cron: '0 12 * * *'        # UTC 12:00 = 北京时间 20:00
+  workflow_dispatch:
+
+jobs:
+  run-sign:
+    runs-on: ubuntu-latest
+
+    # 允许写回仓库
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}   # 默认 token 已有写权限
+
+      - name: Set timezone to Asia/Shanghai
+        run: sudo timedatectl set-timezone Asia/Shanghai
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install system deps for ddddocr
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libglib2.0-0 libsm6 libxext6 libxrender-dev libgomp1
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run main.py
+        run: python main.py
+
+      - name: Commit & push changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          git commit -m "Auto sign-in result [skip ci]" || exit 0
+          git push
