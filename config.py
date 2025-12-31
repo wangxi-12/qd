@@ -29,8 +29,8 @@ bugku_password = ""
 
 # CTFHub相关配置
 # https://www.ctfhub.com/
-ctfhub_username = ""
-ctfhub_password = ""
+ctfhub_username = "wangxi_1"
+ctfhub_password = "4IuBbpq1IoPxwIb"
 
 # 攻防世界相关配置
 # https://adworld.xctf.org.cn/
